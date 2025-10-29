@@ -32,14 +32,16 @@ export default function AuthPage() {
 
   const form = useForm<LoginInput | RegisterInput>({
     resolver: zodResolver(isLogin ? loginSchema : registerSchema),
-    defaultValues: isLogin ? {
-      username: "",
-      password: "",
-    } : {
-      email: "",
-      username: "",
-      password: "",
-    },
+    defaultValues: isLogin
+      ? {
+          username: "",
+          password: "",
+        }
+      : {
+          email: "",
+          username: "",
+          password: "",
+        },
   });
 
   const onSubmit = async (data: LoginInput | RegisterInput) => {
@@ -52,8 +54,8 @@ export default function AuthPage() {
         const formData = new URLSearchParams();
         formData.append("username", data.username);
         formData.append("password", data.password);
-        
-        const loginResponse = await fetch(`${baseUrl}/login`, {
+
+        const loginResponse = await fetch(`${baseUrl}/auth/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -74,7 +76,7 @@ export default function AuthPage() {
         const meResponse = await fetch(`${baseUrl}/auth/me`, {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         });
 
@@ -91,7 +93,7 @@ export default function AuthPage() {
           description: "You've successfully logged in.",
         });
       } else {
-        const registerResponse = await fetch(`${baseUrl}/register`, {
+        const registerResponse = await fetch(`${baseUrl}/auth/register`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -103,16 +105,18 @@ export default function AuthPage() {
           const error = await registerResponse
             .json()
             .catch(() => ({ message: "Registration failed" }));
-          throw new Error(error.message || error.detail || "Registration failed");
+          throw new Error(
+            error.message || error.detail || "Registration failed",
+          );
         }
 
         const registerResult = await registerResponse.json();
-        
+
         if (registerResult.access_token) {
           const meResponse = await fetch(`${baseUrl}/auth/me`, {
             method: "GET",
             headers: {
-              "Authorization": `Bearer ${registerResult.access_token}`,
+              Authorization: `Bearer ${registerResult.access_token}`,
             },
           });
 
@@ -342,14 +346,18 @@ export default function AuthPage() {
                     onClick={() => {
                       const newIsLogin = !isLogin;
                       setIsLogin(newIsLogin);
-                      form.reset(newIsLogin ? {
-                        username: "",
-                        password: "",
-                      } : {
-                        email: "",
-                        username: "",
-                        password: "",
-                      });
+                      form.reset(
+                        newIsLogin
+                          ? {
+                              username: "",
+                              password: "",
+                            }
+                          : {
+                              email: "",
+                              username: "",
+                              password: "",
+                            },
+                      );
                     }}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                     data-testid="button-toggle-mode"
