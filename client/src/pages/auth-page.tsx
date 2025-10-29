@@ -2,12 +2,23 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, registerSchema, type LoginInput, type RegisterInput } from "@shared/schema";
+import {
+  loginSchema,
+  registerSchema,
+  type LoginInput,
+  type RegisterInput,
+} from "@shared/schema";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, Mail, User, Lock, Eye, EyeOff } from "lucide-react";
 
@@ -21,7 +32,10 @@ export default function AuthPage() {
 
   const form = useForm<LoginInput | RegisterInput>({
     resolver: zodResolver(isLogin ? loginSchema : registerSchema),
-    defaultValues: {
+    defaultValues: isLogin ? {
+      username: "",
+      password: "",
+    } : {
       email: "",
       username: "",
       password: "",
@@ -31,9 +45,10 @@ export default function AuthPage() {
   const onSubmit = async (data: LoginInput | RegisterInput) => {
     setIsLoading(true);
     try {
-      const endpoint = isLogin ? "/login" : "/register";
-      const baseUrl = "https://c6adf329-5976-4335-9fcd-c4a497e46873-00-fp0bi52160p3.riker.replit.dev";
-      
+      const endpoint = isLogin ? "/auth/login" : "/auth/register";
+      const baseUrl =
+        "https://4a8d32ff-a76e-410f-b581-d97f4f3e0313-00-2rv2ceqd1ssmk.spock.replit.dev";
+
       const response = await fetch(`${baseUrl}${endpoint}`, {
         method: "POST",
         headers: {
@@ -43,17 +58,21 @@ export default function AuthPage() {
       });
 
       if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: "Authentication failed" }));
+        const error = await response
+          .json()
+          .catch(() => ({ message: "Authentication failed" }));
         throw new Error(error.message || "Authentication failed");
       }
 
       const result = await response.json();
-      
+
       login(result.token, result.user);
-      
+
       toast({
         title: isLogin ? "Welcome back!" : "Account created!",
-        description: isLogin ? "You've successfully logged in." : "Your account has been created successfully.",
+        description: isLogin
+          ? "You've successfully logged in."
+          : "Your account has been created successfully.",
       });
 
       setLocation("/dashboard");
@@ -61,7 +80,10 @@ export default function AuthPage() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error instanceof Error ? error.message : "An error occurred. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "An error occurred. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -73,22 +95,24 @@ export default function AuthPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-primary/90 to-primary/80 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_70%,rgba(255,255,255,0.05),transparent_50%)]" />
-        
+
         <div className="relative z-10 flex flex-col justify-center items-center w-full px-12 text-primary-foreground">
           <div className="max-w-md space-y-8">
             <div className="flex items-center gap-3">
               <div className="w-14 h-14 rounded-lg bg-primary-foreground/10 backdrop-blur-sm flex items-center justify-center">
                 <Shield className="w-7 h-7" />
               </div>
-              <h1 className="text-4xl font-semibold tracking-tight">SecureAuth</h1>
+              <h1 className="text-4xl font-semibold tracking-tight">
+                SecureAuth
+              </h1>
             </div>
-            
+
             <div className="space-y-4">
               <h2 className="text-3xl font-semibold leading-tight">
                 Secure access to your digital world
               </h2>
               <p className="text-lg text-primary-foreground/80">
-                Enterprise-grade authentication with seamless user experience. 
+                Enterprise-grade authentication with seamless user experience.
                 Protect your data while maintaining effortless access.
               </p>
             </div>
@@ -99,9 +123,12 @@ export default function AuthPage() {
                   <Shield className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg mb-1">Bank-level Security</h3>
+                  <h3 className="font-semibold text-lg mb-1">
+                    Bank-level Security
+                  </h3>
                   <p className="text-primary-foreground/70 text-sm">
-                    Your credentials are encrypted end-to-end with industry-standard protocols
+                    Your credentials are encrypted end-to-end with
+                    industry-standard protocols
                   </p>
                 </div>
               </div>
@@ -113,7 +140,8 @@ export default function AuthPage() {
                 <div>
                   <h3 className="font-semibold text-lg mb-1">Instant Access</h3>
                   <p className="text-primary-foreground/70 text-sm">
-                    Get up and running in seconds with our streamlined authentication flow
+                    Get up and running in seconds with our streamlined
+                    authentication flow
                   </p>
                 </div>
               </div>
@@ -137,36 +165,44 @@ export default function AuthPage() {
                 {isLogin ? "Welcome back" : "Create account"}
               </CardTitle>
               <CardDescription className="text-base">
-                {isLogin 
-                  ? "Enter your credentials to access your account" 
+                {isLogin
+                  ? "Enter your credentials to access your account"
                   : "Sign up to get started with SecureAuth"}
               </CardDescription>
             </CardHeader>
-            
+
             <CardContent>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
                 <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium">
-                      Email
-                    </Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="name@example.com"
-                        className="pl-10 h-11"
-                        data-testid="input-email"
-                        {...form.register("email")}
-                      />
+                  {!isLogin && (
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-sm font-medium">
+                        Email
+                      </Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="name@example.com"
+                          className="pl-10 h-11"
+                          data-testid="input-email"
+                          {...form.register("email")}
+                        />
+                      </div>
+                      {form.formState.errors.email && (
+                        <p
+                          className="text-sm text-destructive"
+                          data-testid="error-email"
+                        >
+                          {form.formState.errors.email.message}
+                        </p>
+                      )}
                     </div>
-                    {form.formState.errors.email && (
-                      <p className="text-sm text-destructive" data-testid="error-email">
-                        {form.formState.errors.email.message}
-                      </p>
-                    )}
-                  </div>
+                  )}
 
                   <div className="space-y-2">
                     <Label htmlFor="username" className="text-sm font-medium">
@@ -184,7 +220,10 @@ export default function AuthPage() {
                       />
                     </div>
                     {form.formState.errors.username && (
-                      <p className="text-sm text-destructive" data-testid="error-username">
+                      <p
+                        className="text-sm text-destructive"
+                        data-testid="error-username"
+                      >
                         {form.formState.errors.username.message}
                       </p>
                     )}
@@ -218,7 +257,10 @@ export default function AuthPage() {
                       </button>
                     </div>
                     {form.formState.errors.password && (
-                      <p className="text-sm text-destructive" data-testid="error-password">
+                      <p
+                        className="text-sm text-destructive"
+                        data-testid="error-password"
+                      >
                         {form.formState.errors.password.message}
                       </p>
                     )}
@@ -245,8 +287,16 @@ export default function AuthPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      setIsLogin(!isLogin);
-                      form.reset();
+                      const newIsLogin = !isLogin;
+                      setIsLogin(newIsLogin);
+                      form.reset(newIsLogin ? {
+                        username: "",
+                        password: "",
+                      } : {
+                        email: "",
+                        username: "",
+                        password: "",
+                      });
                     }}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                     data-testid="button-toggle-mode"
@@ -254,12 +304,16 @@ export default function AuthPage() {
                     {isLogin ? (
                       <>
                         Don't have an account?{" "}
-                        <span className="text-primary font-medium">Sign up</span>
+                        <span className="text-primary font-medium">
+                          Sign up
+                        </span>
                       </>
                     ) : (
                       <>
                         Already have an account?{" "}
-                        <span className="text-primary font-medium">Sign in</span>
+                        <span className="text-primary font-medium">
+                          Sign in
+                        </span>
                       </>
                     )}
                   </button>
