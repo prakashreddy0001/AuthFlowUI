@@ -48,7 +48,7 @@ export default function AuthPage() {
     setIsLoading(true);
     try {
       const baseUrl =
-        "https://c6adf329-5976-4335-9fcd-c4a497e46873-00-fp0bi52160p3.riker.replit.dev";
+        "https://4a8d32ff-a76e-410f-b581-d97f4f3e0313-00-2rv2ceqd1ssmk.spock.replit.dev";
 
       if (isLogin) {
         const formData = new URLSearchParams();
@@ -160,7 +160,7 @@ export default function AuthPage() {
                 <Shield className="w-7 h-7" />
               </div>
               <h1 className="text-4xl font-semibold tracking-tight">
-                SecureAuth
+                AuthTest
               </h1>
             </div>
 

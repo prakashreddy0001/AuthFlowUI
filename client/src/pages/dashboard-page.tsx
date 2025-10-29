@@ -1,7 +1,13 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Shield, LogOut, Activity, Clock, CheckCircle2 } from "lucide-react";
 
@@ -26,7 +32,7 @@ export default function DashboardPage() {
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
               <Shield className="w-5 h-5 text-primary" />
             </div>
-            <h1 className="text-xl font-semibold">SecureAuth</h1>
+            <h1 className="text-xl font-semibold">AuthTest</h1>
           </div>
 
           <div className="flex items-center gap-4">
@@ -40,7 +46,10 @@ export default function DashboardPage() {
                 <p className="text-sm font-medium" data-testid="text-username">
                   {user?.username}
                 </p>
-                <p className="text-xs text-muted-foreground" data-testid="text-email">
+                <p
+                  className="text-xs text-muted-foreground"
+                  data-testid="text-email"
+                >
                   {user?.email}
                 </p>
               </div>
@@ -74,7 +83,9 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="border-card-border">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Account Status</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Account Status
+                </CardTitle>
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                   <CheckCircle2 className="w-5 h-5 text-primary" />
                 </div>
@@ -89,7 +100,9 @@ export default function DashboardPage() {
 
             <Card className="border-card-border">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Last Activity</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Last Activity
+                </CardTitle>
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Activity className="w-5 h-5 text-primary" />
                 </div>
@@ -128,19 +141,27 @@ export default function DashboardPage() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-muted-foreground">Username</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Username
+                  </p>
                   <p className="text-base font-medium">{user?.username}</p>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-muted-foreground">Email Address</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Email Address
+                  </p>
                   <p className="text-base font-medium">{user?.email}</p>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-muted-foreground">User ID</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    User ID
+                  </p>
                   <p className="text-base font-mono text-sm">{user?.id}</p>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-muted-foreground">Account Type</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Account Type
+                  </p>
                   <p className="text-base font-medium">Standard User</p>
                 </div>
               </div>
@@ -156,8 +177,8 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                Your session is protected with enterprise-grade encryption. 
-                For your security, always log out when using shared devices.
+                Your session is protected with enterprise-grade encryption. For
+                your security, always log out when using shared devices.
               </p>
             </CardContent>
           </Card>
