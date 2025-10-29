@@ -45,35 +45,88 @@ export default function AuthPage() {
   const onSubmit = async (data: LoginInput | RegisterInput) => {
     setIsLoading(true);
     try {
-      const endpoint = isLogin ? "/auth/login" : "/auth/register";
       const baseUrl =
-        "https://4a8d32ff-a76e-410f-b581-d97f4f3e0313-00-2rv2ceqd1ssmk.spock.replit.dev";
+        "https://c6adf329-5976-4335-9fcd-c4a497e46873-00-fp0bi52160p3.riker.replit.dev";
 
-      const response = await fetch(`${baseUrl}${endpoint}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      if (isLogin) {
+        const formData = new URLSearchParams();
+        formData.append("username", data.username);
+        formData.append("password", data.password);
+        
+        const loginResponse = await fetch(`${baseUrl}/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: formData.toString(),
+        });
 
-      if (!response.ok) {
-        const error = await response
-          .json()
-          .catch(() => ({ message: "Authentication failed" }));
-        throw new Error(error.message || "Authentication failed");
+        if (!loginResponse.ok) {
+          const error = await loginResponse
+            .json()
+            .catch(() => ({ detail: "Login failed" }));
+          throw new Error(error.detail || error.message || "Login failed");
+        }
+
+        const loginResult = await loginResponse.json();
+        const accessToken = loginResult.access_token;
+
+        const meResponse = await fetch(`${baseUrl}/auth/me`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${accessToken}`,
+          },
+        });
+
+        if (!meResponse.ok) {
+          throw new Error("Failed to fetch user information");
+        }
+
+        const userInfo = await meResponse.json();
+
+        login(accessToken, userInfo);
+
+        toast({
+          title: "Welcome back!",
+          description: "You've successfully logged in.",
+        });
+      } else {
+        const registerResponse = await fetch(`${baseUrl}/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!registerResponse.ok) {
+          const error = await registerResponse
+            .json()
+            .catch(() => ({ message: "Registration failed" }));
+          throw new Error(error.message || error.detail || "Registration failed");
+        }
+
+        const registerResult = await registerResponse.json();
+        
+        if (registerResult.access_token) {
+          const meResponse = await fetch(`${baseUrl}/auth/me`, {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${registerResult.access_token}`,
+            },
+          });
+
+          if (meResponse.ok) {
+            const userInfo = await meResponse.json();
+            login(registerResult.access_token, userInfo);
+          }
+        }
+
+        toast({
+          title: "Account created!",
+          description: "Your account has been created successfully.",
+        });
       }
-
-      const result = await response.json();
-
-      login(result.token, result.user);
-
-      toast({
-        title: isLogin ? "Welcome back!" : "Account created!",
-        description: isLogin
-          ? "You've successfully logged in."
-          : "Your account has been created successfully.",
-      });
 
       setLocation("/dashboard");
     } catch (error) {
